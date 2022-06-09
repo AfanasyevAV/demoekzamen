@@ -1,0 +1,265 @@
+LAUNCHSCREEN (MAINACTIVITY)
+        new Handler().postDelayed(()->{
+            Intent intent = new Intent(this, MainActivity2.class);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            finish();
+        }, 3000);
+
+SPINNER(MAINACTIVITY+STRING+XML)
+Spinner spinner = findViewById(R.id.coursesspinner);
+        String selected = spinner.getSelectedItem().toString();
+        Toast.makeText(getApplicationContext(), selected, Toast.LENGTH_SHORT).show();
+
+<string-array name="">
+        <item></item>
+</string-array>
+
+android:entries="@array/[NAZVANIE]"
+
+
+NAVIGATIONMENU (item[id/title/icon](menu))(framelayout)
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+
+    BottomNavigationView bottomNavigationView;
+    Button button;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.person);
+
+
+    }
+    FirstFragment firstFragment = new FirstFragment();
+    SecondFragment secondFragment = new SecondFragment();
+    ThirdFragment thirdFragment = new ThirdFragment();
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.person:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, firstFragment).commit();
+                return true;
+
+
+            case R.id.home:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, secondFragment).commit();
+                return true;
+
+            case R.id.settings:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, thirdFragment).commit();
+                return true;
+        }
+        return false;
+    }
+
+}
+
+PROGRESSBAR HORIZONTAL (res[style/item](styles, color))
+public class MainActivity extends AppCompatActivity {
+
+    ProgressBar progressBar2;
+    int counter = 0;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        progb();
+    }
+
+    private void progb() {
+        progressBar2 = (ProgressBar) findViewById(R.id.progressBar2);
+        Timer t = new Timer();
+        TimerTask tt = new TimerTask() {
+            @Override
+            public void run() {
+                counter = counter + 5;
+                progressBar2.setProgress(counter);
+
+                if (counter == 100)
+                    t.cancel();
+
+            }
+        };
+        t.schedule(tt, 0, 100);
+    }
+}
+
+ROTATEICON
+public class MainActivity extends AppCompatActivity {
+
+    ImageView imageView;
+    Button rotateBTN;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        imageView = findViewById(R.id.imageview);
+        rotateBTN = findViewById(R.id.BTNrotate);
+
+        
+
+        rotateBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
+                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
+                imageView.startAnimation(animation);
+            }
+        });
+    }
+}
+
+(res[anim])
+<?xml version="1.0" encoding="utf-8"?>
+<set
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <rotate
+        android:duration="6000"
+        android:fromDegrees="0"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toDegrees="360" />
+</set>
+
+
+SECONDSCREEN(FRAGSMOVE)
+public class MainActivity extends AppCompatActivity {
+
+    ViewPager viewPager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        viewPager = findViewById(R.id.viewPager);
+        MyAdapter myAdapter = new MyAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(myAdapter);
+
+        ScrollingPagerIndicator indicator = findViewById(R.id.indicator);
+        indicator.attachToPager(viewPager);
+    }
+}
+
+(ADAPTER)
+public class MyAdapter extends FragmentPagerAdapter
+{
+    public MyAdapter(@NonNull FragmentManager fm){
+        super(fm);
+    }
+
+    @NonNull
+    @Override
+    public Fragment getItem(int position) {
+        switch (position){
+            case 0:
+                return new onBoardingOne();
+            case 1:
+                return new onBoardingTwo();
+        }
+        return null;
+    }
+
+    @Override
+    public int getCount() {
+        return 2;
+    }
+}
+(implementation "ru.tinkoff.scrollingpagerindicator:scrollingpagerindicator:1.2.1")(xml: ru.tinkoff)
+
+
+VALIDATION
+public class MainActivity extends AppCompatActivity {
+
+
+    Button bCancel, bProceed;
+    EditText etFirstName, etLastName, etEmail, etPassword;
+
+    boolean isAllFieldsChecked = false;
+    private static final Pattern PASSWORD_PATTERN =
+            Pattern.compile("^([a-z1-9]{4,})+[@]+([a-z]{2,})+[.]+([a-z]{2,})$");
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+        bProceed = findViewById(R.id.proceedButton);
+        bCancel = findViewById(R.id.cancelButton);
+
+
+        etFirstName = findViewById(R.id.firstName);
+        etLastName = findViewById(R.id.lastName);
+        etEmail = findViewById(R.id.email);
+        etPassword = findViewById(R.id.password);
+
+
+        bProceed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                isAllFieldsChecked = CheckAllFields();
+
+                if (isAllFieldsChecked) {
+                    Intent i = new Intent(MainActivity.this, MainActivity2.class);
+                    startActivity(i);
+                }
+            }
+        });
+    }
+
+    private boolean CheckAllFields() {
+        if (etFirstName.length() == 0) {
+            etFirstName.setError("This field is required");
+            return false;
+        }
+
+        if (etLastName.length() == 0) {
+            etLastName.setError("This field is required");
+            return false;
+        }
+
+        String emailToText = etEmail.getText().toString();
+        if (!PASSWORD_PATTERN.matcher(emailToText).matches()){
+            etEmail.setError("Email is required");
+            return false;
+        }
+
+        if (etPassword.length() == 0) {
+            etPassword.setError("Password is required");
+            return false;
+        } else if (etPassword.length() < 8) {
+            etPassword.setError("Password must be minimum 8 characters");
+            return false;
+        }
+
+        return true;
+    }
+}
+
+BTN_STYLE[]
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="30dp"/>
+    <solid android:color="@color/clr_board" />
+</shape>
+
+STYLES.ORANGE()
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="OrangeMain" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorAccent">#FA4A0C</item>
+    </style>
+</resources>
